@@ -1,5 +1,9 @@
 import py2neo
+from py2neo import neo4j
 import csv
+
+node = py2neo.node
+rel  = py2neo.rel
 
 rawData = []
 
@@ -12,19 +16,38 @@ with open("/home/devinj/neo4jData/ydata-ymusic-rating-study-v1_0-test.txt",'rb')
         rawData.append(row)
         if row[0] not in users:
             users.append(row[0])
-            currentUser = py2neo.node(uid=row[0])
+            currentUser = node(uid=row[0])
+            #forNeo.append(currentUser)
         if row[1] not in songs:
             songs.append(row[1])
-            currentSong = py2neo.node(songid=row[1]) 
-        forNeo.append(py2neo.rel(currentUser,("RATED",{"rating":row[2]}),currentSong))
+            currentSong = node(songid=row[1])
+            #forNeo.append(currentSong)
+        forNeo.append(rel(currentUser,("RATED",{"rating": row[2]}),currentSong))
 
 
 def head(data,i=9):
     for row in range(0,i):
         print data[row]
 
-
-
-
 head(forNeo)
-print type(forNeo[0])
+
+graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
+batch = neo4j.WriteBatch(graph_db)
+
+graph_db.create(rel(currentUser,("RATED",{"rating": 5}),currentSong))
+
+for row in range(0,1):
+    graph_db.create(forNeo[row])
+
+#neoStuff =  batch.submit()
+
+
+
+#upload = graph_db.create(forNeo[0])
+
+
+
+neo4j._add_header('X-Stream', 'true;format=pretty')
+
+
+
