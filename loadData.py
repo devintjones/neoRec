@@ -43,10 +43,10 @@ def prepForNeo(data):
 
     allTogether = users + songs + neoRatings
     
-    return users,songs,neoRatings,allTogether
+    return allTogether
 
 
-users,songs,neoRatings,allTogether = prepForNeo(ratings)
+allTogether = prepForNeo(ratings)
 
 
 
